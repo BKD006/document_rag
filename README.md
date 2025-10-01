@@ -27,3 +27,9 @@ git commit -m "<write your commit message>"
 
 # Push to remote (after adding remote origin)
 git push
+
+
+### Minimum requirement for this project
+1. LLM Model
+2. Embedding Model
+3. Vector Database

@@ -33,3 +33,8 @@ git push
 1. LLM Model
 2. Embedding Model
 3. Vector Database
+
+##GROQ API KEY LINK
+'''
+https://console.groq.com/keys
+'''

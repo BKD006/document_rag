@@ -34,7 +34,12 @@ git push
 2. Embedding Model
 3. Vector Database
 
-##GROQ API KEY LINK
+### GROQ API KEY LINK
 '''
 https://console.groq.com/keys
+'''
+
+### GEMINI API KEY LINK
+'''
+https://aistudio.google.com/app/api-keys
 '''

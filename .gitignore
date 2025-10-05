@@ -1,2 +1,4 @@
 env
 .env
+notebook/faiss_index_RAGforNLP
+notebook/data

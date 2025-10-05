@@ -3,4 +3,10 @@ python-dotenv
 langchain_groq
 langchain_openai
 ipykernel
--e .
+langchain_google_genai
+langchain_community
+pypdf
+faiss-cpu
+langchain-google-vertexai
+langchain-aws
+boto3

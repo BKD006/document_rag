@@ -10,3 +10,5 @@ faiss-cpu
 langchain-google-vertexai
 langchain-aws
 boto3
+structlog
+PyMuPDF

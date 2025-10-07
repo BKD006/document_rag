@@ -3,5 +3,5 @@ env
 document_rag.egg-info
 notebook/faiss_index_RAGforNLP
 notebook/data
-_pychache_/
 logs/
+__pycache__/

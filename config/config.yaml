@@ -1,0 +1,16 @@
+faiss_db:
+  collection_name: "document_rag"
+
+embedding_model:
+  provider: "aws"
+  model_name: "amazon.titan-embed-text-v2:0"
+
+retriver:
+  top_k: 10
+
+llm:
+  groq:
+    provider: "groq"
+    model_name: "deepseek-r1-distill-llama-70b"
+    temperature: 0
+    max_output_token: 2048

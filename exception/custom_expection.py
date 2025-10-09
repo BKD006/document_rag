@@ -1,7 +1,7 @@
 import sys
 import traceback
-from logger.custom_logger import CustomLogger
-logger=CustomLogger().get_logger(__file__)
+# from logger.custom_logger import CustomLogger
+# logger=CustomLogger().get_logger(__file__)
 class DocumentalRagException(Exception):
     """Custom exception for Document Portal"""
     def __init__(self, error_message:str, error_details: sys):
@@ -17,11 +17,11 @@ class DocumentalRagException(Exception):
             Traceback:
             {self.traceback_str}"""
 
-if __name__=="__main__":
-    try:
-        a = 1/0
-        print(a)
-    except Exception as e:
-        app_exc=DocumentalRagException(e, sys)
-        logger.error(app_exc)
-        raise app_exc
+# if __name__=="__main__":
+#     try:
+#         a = 1/0
+#         print(a)
+#     except Exception as e:
+#         app_exc=DocumentalRagException(e, sys)
+#         logger.error(app_exc)
+#         raise app_exc

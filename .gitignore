@@ -5,3 +5,4 @@ notebook/faiss_index_RAGforNLP
 notebook/data
 logs/
 __pycache__/
+data

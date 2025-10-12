@@ -53,24 +53,24 @@ class DocumentHandler:
             self.log.error(f"Error Reading PDF: {e}")
             raise DocumentalRagException("Error Reading PDF", e) from e
 
-if __name__ == "__main__":
-    from pathlib import Path
-    from io import BytesIO
-    pdf_path=r"C:\\Users\\birok\\Python\\LLMOPs\\document_rag\\data\\document_analysis\\Attention_All__you_need.pdf"
-    class DummyFile:
-        def __init__(self, file_path):
-            self.name=Path(file_path).name
-            self._file_path=file_path
-        def getbuffer(self):
-            with open(self._file_path, "rb") as f:
-                return f.read()
+# if __name__ == "__main__":
+#     from pathlib import Path
+#     from io import BytesIO
+#     pdf_path=r"C:\\Users\\birok\\Python\\LLMOPs\\document_rag\\data\\document_analysis\\Attention_All__you_need.pdf"
+#     class DummyFile:
+#         def __init__(self, file_path):
+#             self.name=Path(file_path).name
+#             self._file_path=file_path
+#         def getbuffer(self):
+#             with open(self._file_path, "rb") as f:
+#                 return f.read()
         
-    dummy_path=DummyFile(pdf_path)
-    handler=DocumentHandler()
-    try:
-        saved_path=handler.save_pdf(dummy_path)
-        print(saved_path)
-        content= handler.read_pdf(saved_path)
-        print(content[:500])
-    except Exception as e:
-        print(f"Error: {e}")
+#     dummy_path=DummyFile(pdf_path)
+#     handler=DocumentHandler()
+#     try:
+#         saved_path=handler.save_pdf(dummy_path)
+#         print(saved_path)
+#         content= handler.read_pdf(saved_path)
+#         print(content[:500])
+#     except Exception as e:
+#         print(f"Error: {e}")

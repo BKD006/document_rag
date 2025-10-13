@@ -12,3 +12,4 @@ langchain-aws
 boto3
 structlog
 PyMuPDF
+pandas

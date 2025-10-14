@@ -16,27 +16,38 @@ class DocumentCompareLLM:
         self.loader= ModelLoader()
         self.llm= self.loader.load_llm()
         self.parser= JsonOutputParser(pydantic_object=SummaryResponse)
-        self.fixing_parser=OutputFixingParser.from_llm(self.parser, llm=self.llm)
+        self.fixing_parser=OutputFixingParser.from_llm(parser=self.parser, llm=self.llm)
         self.prompt= PROMPT_REGISTRY["document_comparison"]
-        self.chain= self.prompt | self.llm | self.parser | self.fixing_parser
+        self.chain= self.prompt | self.llm | self.parser 
         self.log.info("DocumentCompareLLM has been initialized with model and parser.")
 
-    def compare_documents(self):
+    def compare_documents(self, combined_documents):
         """
         Compares two documents and returns a structured comparison.
         """
         try:
-            pass
+           inputs={
+               "combined_docs": combined_documents,
+               "format_instruction": self.parser.get_format_instructions()
+           }
+           self.log.info("Starting Document information.", inputs=inputs)
+           response= self.chain.invoke(inputs)
+           self.log.info("Document Comparison completed", response=response)
+           return self.format_response(response)
+        
+
         except Exception as e:
             self.log.error(f"Error in compare_documents: {e}")
             raise DocumentalRagException("An error occured while comparing documents.", sys)
         
-    def format_response(self):
+    def format_response(self, response_parsed: list[dict])->pd.DataFrame:
         """
         Formats the response from the LLM into a structured format.
         """
         try:
-            pass
+            df= pd.DataFrame(response_parsed)
+            self.log.info("Response formatted into DataFrame", dataframe=df)
+            return df
         except Exception as e:
             self.log.error(f"Error formatting message in DataFrame: {e}")
             raise DocumentalRagException("Error formatting response", sys)

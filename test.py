@@ -69,6 +69,7 @@ def test_compare_documents():
 
     ref_file,act_file= ingestion.save_uploaded_files(ref_upload, act_upload)
     combined_text= ingestion.combined_documents()
+    ingestion.clean_old_sessions(keep_latest=3)
     print(combined_text[:1000])
 
     llm_compare=DocumentCompareLLM()

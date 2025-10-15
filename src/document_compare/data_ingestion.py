@@ -1,40 +1,48 @@
 import sys
+import uuid
+import os
 from pathlib import Path
+from datetime import datetime
 import fitz  # PyMuPDF
 from logger.custom_logger import CustomLogger
 from exception.custom_expection import DocumentalRagException
 
 class DocumentIngestion:
-    def __init__(self, base_dir:str= "data\\document_compare"):
+    def __init__(self, base_dir:str= "data\\document_compare", session_id:str=None):
         self.log= CustomLogger().get_logger(__name__)
         self.base_dir= Path(base_dir)
         self.base_dir.mkdir(parents=True, exist_ok=True)
+        #Create base session directory
+        self.session_id= session_id or f"session_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
+        self.session_path=os.path.join(self.base_dir,self.session_id)
+        os.makedirs(self.session_path, exist_ok=True)
 
     def delete_existing_file(self):
         """
         Deletes existing files at the specified paths.
         """
         try:
-            if self.base_dir.exists() and self.base_dir.is_dir():
-                for file in self.base_dir.iterdir():
+            session_dir=Path(self.session_path)
+            if session_dir.exists() and session_dir.is_dir():
+                for file in session_dir.iterdir():
                     if file.is_file():
                         file.unlink()
                         self.log.info("File deleted", path= str(file))
-                self.log.info("Directory cleaned", directory=str(self.base_dir))
+                self.log.info("Directory cleaned", directory=str(session_dir))
         except Exception as e:
             self.log.error(f"Error deleting existing files: {e}")
             raise DocumentalRagException("An error occured while deleting existing files", sys)
 
     def save_uploaded_files(self, reference_file, actual_file):
         """
-        Saves uploaded files to a specified directory.
+        Saves uploaded files to a specified session directory.
         """
         try:
             self.delete_existing_file()
             self.log.info("Existing file deleted successfully.")
 
-            ref_path=self.base_dir / reference_file.name
-            act_path=self.base_dir / actual_file.name
+            ref_path=Path(self.session_path) / reference_file.name
+            act_path=Path(self.session_path) / actual_file.name
 
             if not reference_file.name.endswith(".pdf") or not actual_file.name.endswith(".pdf"):
                 raise ValueError("Only PDF files are allowed.")
@@ -44,6 +52,7 @@ class DocumentIngestion:
             
             with open(act_path, "wb") as f:
                 f.write(actual_file.getbuffer())
+
             self.log.info("Files Saved ", reference=str(ref_path), actual=str(act_path))
             
             return ref_path, act_path
@@ -90,3 +99,24 @@ class DocumentIngestion:
         except Exception as e:
             self.log.error(f"Error combining documents: {e}")
             raise  DocumentalRagException("An error occured while combining documents.", sys)
+        
+    def clean_old_sessions(self, keep_latest: int=5):
+        """
+        Cleans up old session directories, keeping only the latest specified number of sessions.
+        """
+        try:
+            session_dirs=[d for d in self.base_dir.iterdir() if d.is_dir()]
+            #Sort directories by modification time, newest first
+            session_dirs.sort(key=lambda d: d.stat().st_mtime, reverse=True)
+            if len(session_dirs) > keep_latest:
+                for old_dir in session_dirs[keep_latest:]:
+                    for item in old_dir.iterdir():
+                        if item.is_file():
+                            item.unlink()
+                    old_dir.rmdir()
+                    self.log.info("Old session cleaned", path=str(old_dir))
+            else:
+                self.log.info("No old sessions to clean.")
+        except Exception as e:
+            self.log.error(f"Error cleaning old sessions: {e}")
+            raise DocumentalRagException("An error occured while cleaning old sessions.", sys)

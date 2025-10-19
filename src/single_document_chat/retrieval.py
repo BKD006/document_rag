@@ -32,7 +32,7 @@ class ConversationalRAG:
             self.log.info("Initialized ConversationalRAG", session_id=session_id)
 
             self.chain=RunnableWithMessageHistory(self.rag_chain,
-                                                  self._get_session_history(),
+                                                  self._get_session_history,
                                                   input_messages_key="input",
                                                   history_messages_key="chat_history",
                                                   output_messages_key="answer"
@@ -56,7 +56,11 @@ class ConversationalRAG:
     
     def _get_session_history(self, session_id:str):
         try:
-            pass
+            if not hasattr(self, "_histories"):
+                self._histories={}
+            if session_id not in self._histories:
+                self._histories[session_id]=ChatMessageHistory()
+            return self._histories[session_id]
         except Exception as e:
             self.log.error("Failed to access session history", session_id=session_id, error=str(e))
             raise DocumentalRagException("Failed to retrieve session history", sys)

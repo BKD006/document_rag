@@ -10,7 +10,7 @@ from exception.custom_expection import DocumentalRagException
 from utils.model_loader import ModelLoader
 
 class SingleDocIngestor:
-    def __init__(self, data_dir:str="data/single_document/chat", faiss_dir:str="faiss_index"):
+    def __init__(self, data_dir:str="data/single_document_chat", faiss_dir:str="faiss_index"):
         try:
             self.log=CustomLogger().get_logger(__name__)
             self.data_dir=Path(data_dir)

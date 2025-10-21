@@ -6,3 +6,4 @@ notebook/data
 logs/
 __pycache__/
 data/
+faiss_index

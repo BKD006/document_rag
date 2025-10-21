@@ -40,13 +40,13 @@ class SingleDocIngestor:
                 docs=loader.load()
                 documents.extend(docs)
             self.log.info("PDF files upload", count=len(documents))
-            return self._create_retriver(documents)
+            return self._create_retriever(documents)
 
         except Exception as e:
             self.log.error("Dcoument Ingestion failed", error=str(e))
             raise DocumentalRagException("Error during file ingestion", sys)
     
-    def _create_retriver(self, documents):
+    def _create_retriever(self, documents):
         try:
             splitter=RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=300)
             chunks= splitter.split_documents(documents)

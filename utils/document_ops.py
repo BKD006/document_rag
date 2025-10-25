@@ -42,7 +42,7 @@ def concat_for_comparision(ref_docs: List[Document], act_docs: List[Document])->
     right= concat_for_analysis(act_docs)
     return f"<<REFERANCE_DOCUMENTS>>\n{left}\n\n<<ACTUAL_DOCUMENTS>>\n{right}"
 
-class FastAPIFIleAdapter:
+class FastAPIFileAdapter:
     """Adapt FastAPI UploadFile -> .name + .getbuffer() API"""
     def __init__(self, uf: UploadFile):
         self._uf= uf

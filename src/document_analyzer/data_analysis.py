@@ -1,8 +1,8 @@
 import os
 import sys
 from utils.model_loader import ModelLoader
-from logger.custom_logger import CustomLogger
-from exception.custom_expection import DocumentalRagException
+from logger import GLOBAL_LOGGER as log
+from exception.custom_exception import DocumentRAGException
 from model.models import *
 from langchain_core.output_parsers import JsonOutputParser
 from langchain.output_parsers import OutputFixingParser
@@ -14,7 +14,6 @@ class DocumentAnalyzer:
     Automatically logs all actions and supports session-based organisation.
     """
     def __init__(self):
-        self.log= CustomLogger().get_logger(__name__)
         try:
           self.loader=ModelLoader()
           self.llm= self.loader.load_llm()
@@ -24,26 +23,29 @@ class DocumentAnalyzer:
           self.fixing_parser= OutputFixingParser.from_llm(parser=self.parser, llm=self.llm)
           
           self.prompt= PROMPT_REGISTRY["document_analysis"]
-          
-          self.log.info("Document initialized successfully")
+
+          log.info("Document initialized successfully")
           
 
         except Exception as e:
-            self.log.error(f"Error initializing DcoumenetAnalyzer", sys)
-            raise DocumentalRagException("Error in DocumentAnalyzer initialization", sys)  
+            log.error(f"Error initializing DcoumenetAnalyzer: {e}")
+            raise DocumentRAGException("Error in DocumentAnalyzer initialization", sys)  
 
     def analyze_document(self, document_text:str)-> dict:
+        """
+        Analyze a document's text and extract strutured metadata and summary.
+        """
         try:
             chain= self.prompt | self.llm | self.fixing_parser
-            self.log.info("Meta-data analysis chain initialized")
+            log.info("Meta-data analysis chain initialized")
 
             response= chain.invoke({
-                "format_instruction": self.parser.get_format_instructions(),
+                "format_instructions": self.parser.get_format_instructions(),
                 "document_text": document_text
             })
-            self.log.info("Metadata extraction successful", key=list(response.keys()))
+            log.info("Metadata extraction successful", key=list(response.keys()))
             return response
         
         except Exception as e:
-            self.log.error("Metadata analysis failed", error=str(e))
-            raise DocumentalRagException("Metadata extraction failed") from e
+            log.error("Metadata analysis failed", error=str(e))
+            raise DocumentRAGException("Metadata extraction failed",sys)

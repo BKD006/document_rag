@@ -3,7 +3,7 @@ import sys
 from dotenv import load_dotenv
 from utils.config_loader import load_config
 from logger.custom_logger import CustomLogger
-from exception.custom_expection import DocumentalRagException
+from exception.custom_exception import DocumentRAGException
 from langchain_groq import ChatGroq
 from langchain_aws import BedrockEmbeddings
 
@@ -28,7 +28,7 @@ class ModelLoader:
         missing=[k for k, v in self.api_keys.items() if not v]
         if missing:
             log.error("Missing environment variables", missing_vars=missing)
-            raise DocumentalRagException("Missing ennvironment variables", sys)
+            raise DocumentRAGException("Missing ennvironment variables", sys)
         log.info("Environment variables validated", available_keys=[k for k in self.api_keys if self.api_keys[k]])
 
     def load_embeddings(self):
@@ -39,7 +39,7 @@ class ModelLoader:
             return BedrockEmbeddings(model_id=model_name)
         except Exception as e:
             log.error("Error loading embedding model", error=str(e))
-            raise DocumentalRagException("Failed to load embedding model", sys)
+            raise DocumentRAGException("Failed to load embedding model", sys)
     def load_llm(self):
         """Load and return the configured LLM Model"""
         llm_block= self.config["llm"]

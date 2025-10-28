@@ -6,20 +6,16 @@ import uuid
 import hashlib
 import shutil
 from pathlib import Path
-from datetime import datetime, timezone
 from typing import Iterable, List, Optional, Dict, Any
-
 import fitz # PyMuPDF
 from langchain.schema import Document
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader, TextLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-
 from utils.model_loader import ModelLoader
 from logger import GLOBAL_LOGGER as log
 from exception.custom_exception import DocumentRAGException
 from utils.file_io import generate_session_id, save_uploaded_files
-from utils.document_ops import load_documents, concat_for_analysis, concat_for_comparision
+from utils.document_ops import load_documents
 
 SUPPORTED_EXTENSIONS = {".pdf", ".docx", ".txt"}
 
@@ -70,7 +66,7 @@ class FaissManager:
         
         if new_docs:
             self.vector_store.add_documents(new_docs)
-            self.vector_store.load_local(str(self.index_dir))
+            self.vector_store.save_local(str(self.index_dir))
             self._save_metadata()
         return len(new_docs)
 
@@ -148,7 +144,10 @@ class ChatIngestor:
             texts= [c.page_content for c in chunks]
             metas= [c.metadata for c in chunks]
 
-            vector_store= fm.load_or_create(texts=texts, metadatas=metas)
+            try:
+                vector_store = fm.load_or_create(texts=texts, metadatas=metas)
+            except Exception:
+                vector_store = fm.load_or_create(texts=texts, metadatas=metas)
 
             added=fm.add_documents(chunks)
             log.info("FAISS index updated", added=added, index= str(self.faiss_dir))
@@ -181,7 +180,7 @@ class DocHandler:
                     f.write(uploaded_file.read())
                 else:
                     f.write(uploaded_file.getbuffer())
-            log.info("PDF saved successffully", file=filename, save_path=save_path, session_id=self.session_id)
+            log.info("PDF saved successfully", file=filename, save_path=save_path, session_id=self.session_id)
             return save_path
         except Exception as e:
             log.error("Failed to save PDF", error= str(e), session_id=self.session_id)

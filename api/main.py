@@ -70,11 +70,11 @@ async def analyze_document(file: UploadFile=File(...)) -> Any:
     
 # -------COMPARE-------
 @app.post("/compare")
-async def compare_documents(referance: UploadFile = File(...), actual: UploadFile=File(...)):
+async def compare_documents(reference: UploadFile = File(...), actual: UploadFile = File(...))-> Any:
     try:
-        log.info(f"Comparing files: {referance.filename} vs {actual.filename}")
+        log.info(f"Comparing files: {reference.filename} vs {actual.filename}")
         dc= DocumentComparator()
-        ref_path, act_path= dc.save_uploaded_files(FastAPIFileAdapter(referance), FastAPIFileAdapter(actual))
+        ref_path, act_path= dc.save_uploaded_files(FastAPIFileAdapter(reference), FastAPIFileAdapter(actual))
         _ = ref_path, act_path
         combined_text= dc.combine_documents()
         comp= DocumentCompareLLM()

@@ -1,8 +1,7 @@
-env
+env/
 .env
 document_rag.egg-info
-notebook/faiss_index_RAGforNLP
-notebook/data
+notebook/
 logs/
 __pycache__/
 data/
